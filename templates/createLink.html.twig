@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block extracss %}
+    <style>
+        .tooltip {
+        position: relative;
+        display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 140px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        bottom: 150%;
+        left: 50%;
+        margin-left: -75px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        }
+
+        .tooltip .tooltiptext::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #555 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <main class="flex justify-center">
+        <section class="">
+            <h1>Congratulates u create short link!</h1>
+            <a href="{{ link }}">{{ link }}</a>
+            <div class="tooltip">
+                <button onclick="myFunction()" onmouseout="outFunc()">
+                <span class="tooltiptext" id="myTooltip">Copy to clipboard</span>
+                Copy link
+                </button>
+            </div>
+            <p>tutaj mozesz podejrzec ilosc klikniec w link: <a href="{{ link_clicks }}">{{ link_clicks }}</a></p>
+        </section>
+    </main>
+    <script>
+        function myFunction() {
+        navigator.clipboard.writeText('{{ link }}');
+        
+        var tooltip = document.getElementById("myTooltip");
+        tooltip.innerHTML = "Copied: " + '{{ link }}';
+        }
+
+        function outFunc() {
+        var tooltip = document.getElementById("myTooltip");
+        tooltip.innerHTML = "Copy to clipboard";
+        }
+    </script>
+{% endblock %}
