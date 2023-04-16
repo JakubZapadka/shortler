@@ -15,6 +15,7 @@ class FormLinksType extends AbstractType
         $builder
             ->add('sourceUrl', TextType::class, [
                 'label' => false,
+                'required' => false,
                 'attr' => [
                     'placeholder' => 'Enter link here'
                 ]

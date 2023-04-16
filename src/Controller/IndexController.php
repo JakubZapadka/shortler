@@ -14,25 +14,17 @@ use Symfony\Component\Routing\Annotation\Route;
 class IndexController extends AbstractController
 {
     #[Route('/', name: 'app_index')]
-    public function new(): Response
+    public function new(EntityManagerInterface $entityManager, Request $request): Response
     {
         $task = new Links();
 
         $form = $this->createForm(FormLinksType::class, $task, [
-            'action' => $this->generateUrl('create_link'),
+            'action' => $this->generateUrl('app_index'),
             'method' => 'POST',
         ]);
-        
-        return $this->render("index.html.twig", [
-            'form' => $form
-        ]);
-    }
-    #[Route('/link', name: 'create_link')]
-    public function createLink(EntityManagerInterface $entityManager, Request $request): Response
-    {
-        $form = $this->createForm(FormLinksType::class);
+
         $form->handleRequest($request);
-        
+
         if ($form->isSubmitted() && $form->isValid()) { 
             $newLink = $form->getData();
             function generateRandomString() {
@@ -62,27 +54,29 @@ class IndexController extends AbstractController
 
             // actually executes the queries (i.e. the INSERT query)
             $entityManager->flush();
-            return $this->render("createLink.html.twig", [
-                'link' => "https://".$request->getHost().":".$request->getPort()."/".$link->getOurUrl(),
-                'link_clicks' => "https://".$request->getHost().":".$request->getPort()."/views/".$link->getOurUrl(),
-            ]);
+
+            header("Location: /link/$ourURL");
+            exit();
         }
-        return new Response('Brak danych z formularza');
+        return $this->render("index.html.twig", [
+            'form' => $form
+        ]);
     }
 
-    #[Route('/views/{ourUrl}', name: 'app_views')]
-    public function views($ourUrl, EntityManagerInterface $entityManager): Response
+    #[Route('/link/{ourUrl}', name: 'link')]
+    public function createLink($ourUrl, EntityManagerInterface $entityManager, Request $request): Response
     {
         $repository = $entityManager->getRepository(Links::class);
-        $product = $repository->findOneBy(['ourUrl' => $ourUrl]);
+        $link = $repository->findOneBy(['ourUrl' => $ourUrl]);
 
-        if (!$product) {
-            throw $this->createNotFoundException(
-                'No data found for this link'
-            );
+        if (!$link) {
+            return $this->render("error.html.twig", [
+                'errors'=>["link expired or never existed"]
+            ]);
         }else{
-            return $this->render("views.html.twig", [
-                'clicks' => $product->getClicks(),
+            return $this->render("link.html.twig", [
+                'clicks' => $link->getClicks(),
+                'link' => "https://".$request->getHost().":".$request->getPort()."/".$link->getOurUrl(),
             ]);
         }
     }
@@ -94,8 +88,9 @@ class IndexController extends AbstractController
         $link = $repository->findOneBy(['ourUrl' => $ourUrl]);
 
         if (!$link) {
-            throw $this->createNotFoundException(
-                'No data found for this link'
+            return $this->render("error.html.twig", [
+                'errors'=>["link expired or never existed"]
+            ]
             );
         }else{
             $link->setClicks($link->getClicks()+1);

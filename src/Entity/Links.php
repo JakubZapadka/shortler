@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\LinksRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LinksRepository::class)]
 class Links
@@ -15,7 +16,13 @@ class Links
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $sourceUrl = null;
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
+    #[Assert\Url(
+        protocols: ['https'],
+    )]
+    private string $sourceUrl;
+    //private ?string $sourceUrl = null;
 
     #[ORM\Column(length: 255)]
     private ?string $ourUrl = null;
@@ -36,7 +43,7 @@ class Links
         return $this->sourceUrl;
     }
 
-    public function setSourceUrl(string $sourceUrl): self
+    public function setSourceUrl(?string $sourceUrl): self
     {
         $this->sourceUrl = $sourceUrl;
 

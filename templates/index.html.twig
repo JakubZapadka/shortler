@@ -1,13 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block content %}
-    <main class="flex justify-center">
-        <section class="">
-            <h1>Paste the URL to be shortened</h1>
-            {{ form_start(form) }}
-                {{ form_widget(form) }}
-                <input type="submit" value="Generate link">
-            {{ form_end(form) }}
-        </section>
-    </main>
+    <h1 class="text-3xl text-center">Paste the URL to be shortened</h1>
+    {{ form_start(form, {'attr': {'class': ''}}) }}
+        {{ form_row(form.sourceUrl, {'attr': {'class': 'w-full'}}) }}
+        <input type="submit" value="Generate link">
+    {{ form_end(form) }}
 {% endblock %}
