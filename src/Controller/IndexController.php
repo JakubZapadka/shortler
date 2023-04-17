@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Links;
 use App\Form\FormLinksType;
+use App\Form\TrackLinkType;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\ORM\EntityManagerInterface;
@@ -55,7 +56,7 @@ class IndexController extends AbstractController
             // actually executes the queries (i.e. the INSERT query)
             $entityManager->flush();
 
-            header("Location: /link/$ourURL");
+            header("Location: /track-link/$ourURL");
             exit();
         }
         return $this->render("index.html.twig", [
@@ -63,22 +64,39 @@ class IndexController extends AbstractController
         ]);
     }
 
-    #[Route('/link/{ourUrl}', name: 'link')]
-    public function createLink($ourUrl, EntityManagerInterface $entityManager, Request $request): Response
+    #[Route('/track-link', name: 'link_app')]
+    public function createLink(EntityManagerInterface $entityManager, Request $request): Response
     {
-        $repository = $entityManager->getRepository(Links::class);
-        $link = $repository->findOneBy(['ourUrl' => $ourUrl]);
+        $task = new Links();
 
-        if (!$link) {
-            return $this->render("error.html.twig", [
-                'errors'=>["link expired or never existed"]
-            ]);
-        }else{
-            return $this->render("link.html.twig", [
-                'clicks' => $link->getClicks(),
-                'link' => "https://".$request->getHost().":".$request->getPort()."/".$link->getOurUrl(),
-            ]);
+        $form = $this->createForm(TrackLinkType::class, $task, [
+            'action' => $this->generateUrl('link_app'),
+            'method' => 'POST',
+        ]);
+        
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) { 
+            $repository = $entityManager->getRepository(Links::class);
+            $newLink = $form->getData();
+            $link = $repository->findOneBy(['ourUrl' => substr($newLink->getOurUrl(), -4)]);
+
+            if (!$link) {
+                return $this->render("error.html.twig", [
+                    'errors'=>["link expired or never existed"]
+                ]);
+            }else{
+                return $this->render("link.html.twig", [
+                    'clicks' => $link->getClicks(),
+                    'link' => "https://".$request->getHost().":".$request->getPort()."/".$link->getOurUrl(),
+                    'form' => $form,
+                    'sourceUrl' => $link->getSourceUrl()
+                ]);
+            }
         }
+        return $this->render("link.html.twig", [
+            'form' => $form
+        ]);
     }
 
     #[Route('/{ourUrl}', name: 'app_redirection')]
@@ -89,7 +107,7 @@ class IndexController extends AbstractController
 
         if (!$link) {
             return $this->render("error.html.twig", [
-                'errors'=>["link expired or never existed"]
+                'errors'=>["link expired or never existed xd"]
             ]
             );
         }else{
