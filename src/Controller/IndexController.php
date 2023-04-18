@@ -56,7 +56,7 @@ class IndexController extends AbstractController
             // actually executes the queries (i.e. the INSERT query)
             $entityManager->flush();
 
-            header("Location: /track-link/$ourURL");
+            header("Location: /new-link/$ourURL");
             exit();
         }
         return $this->render("index.html.twig", [
@@ -64,13 +64,27 @@ class IndexController extends AbstractController
         ]);
     }
 
-    #[Route('/track-link', name: 'link_app')]
-    public function createLink(EntityManagerInterface $entityManager, Request $request): Response
+    #[Route('/test', name: 'test')]
+    public function test(): Response
+    {
+        return $this->render("test.html.twig");
+    }
+
+    #[Route('/new-link/{ourUrl}', name: 'new-link')]
+    public function createLink($ourUrl, Request $request): Response
+    {
+        return $this->render("new-link.html.twig", [
+            'link' => "https://".$request->getHost().":".$request->getPort()."/".$ourUrl
+        ]);
+    }
+
+    #[Route('/track-link', name: 'track_link')]
+    public function trackLink(EntityManagerInterface $entityManager, Request $request): Response
     {
         $task = new Links();
 
         $form = $this->createForm(TrackLinkType::class, $task, [
-            'action' => $this->generateUrl('link_app'),
+            'action' => $this->generateUrl('track_link'),
             'method' => 'POST',
         ]);
         

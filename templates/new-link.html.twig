@@ -41,21 +41,13 @@
     </style>
 {% endblock %}
 {% block content %}
-    <h1 class="text-3xl text-center">Paste the short Url to track item</h1>
-    {{ form_start(form, {'attr': {'class': ''}}) }}
-        {{ form_row(form.ourUrl, {'attr': {'class': 'w-full'}}) }}
-        <input type="submit" value="Track link">
-    {{ form_end(form) }}
-    {% if link is defined and clicks is defined and sourceUrl is defined%}
-    <p>Your shortlink: <a href="{{ link }}">{{ link }}</a></p>
+    <p>twój krótki link: <a href="{{ link }}">{{ link }}</a></p>
     <div class="tooltip">
         <button onclick="myFunction()" onmouseout="outFunc()">
         <span class="tooltiptext" id="myTooltip">Copy to clipboard</span>
         Copy link
         </button>
     </div>
-    <p>ammount of clicks in link: <a href="{{ clicks }}">{{ clicks }}</a></p>
-    <p>this shortlink redirection on: {{sourceUrl}}</p>
     <script>
         function myFunction() {
         navigator.clipboard.writeText('{{ link }}');
@@ -69,5 +61,4 @@
         tooltip.innerHTML = "Copy to clipboard";
         }
     </script>
-    {% endif %}
 {% endblock %}
