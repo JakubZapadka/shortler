@@ -1,64 +1,31 @@
 {% extends 'base.html.twig' %}
 
 {% block extracss %}
-    <style>
-        .tooltip {
-        position: relative;
-        display: inline-block;
-        }
-
-        .tooltip .tooltiptext {
-        visibility: hidden;
-        background-color: #555;
-        color: #fff;
-        text-align: center;
-        border-radius: 6px;
-        padding: 5px;
-        position: absolute;
-        z-index: 1;
-        bottom: 150%;
-        left: 50%;
-        margin-left: -75px;
-        opacity: 0;
-        transition: opacity 0.3s;
-        }
-
-        .tooltip .tooltiptext::after {
-        content: "";
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        margin-left: -5px;
-        border-width: 5px;
-        border-style: solid;
-        border-color: #555 transparent transparent transparent;
-        }
-
-        .tooltip:hover .tooltiptext {
-        visibility: visible;
-        opacity: 1;
-        }
-    </style>
 {% endblock %}
 {% block content %}
-    <p>twój krótki link: <a href="{{ link }}">{{ link }}</a></p>
-    <div class="tooltip">
-        <button onclick="myFunction()" onmouseout="outFunc()">
-        <span class="tooltiptext" id="myTooltip">Copy to clipboard</span>
-        Copy link
+    <h1>Your short link: </h1>
+    <section class="block mx-auto my-70 w-300 h-35 relative shadow-md rounded-full overflow-hidden text-secondary-800">
+        <input type="text" name="" id="link" value="{{ link }}" class="form-input w-200 bg-transparent border-none py-5 pl-8 pr-32 text-sm focus:outline-none">
+        <button onclick="myFunction()" mouseout="outFunc()" id="myTooltip" onmouseout="outFunc()" class="form-submit text-sm text-gray-600 absolute top-0 right-0 w-70 h-35 rounded-full border-none bg-transparent shadow-lg cursor-pointer py-5 px-5 w-28 hover:bg-primary-100 transition duration-100 ease-in-out focus:bg-primary-200">
+            Copy link
         </button>
-    </div>
+    </section>
     <script>
         function myFunction() {
-        navigator.clipboard.writeText('{{ link }}');
-        
         var tooltip = document.getElementById("myTooltip");
-        tooltip.innerHTML = "Copied: " + '{{ link }}';
+        var link = document.getElementById("link");
+
+        link.select();
+        link.setSelectionRange(0, 99999); /* For mobile devices */
+
+        document.execCommand("copy");
+
+        tooltip.innerHTML = "Copied";
         }
 
         function outFunc() {
         var tooltip = document.getElementById("myTooltip");
-        tooltip.innerHTML = "Copy to clipboard";
+        tooltip.innerHTML = "Copy link";
         }
     </script>
 {% endblock %}

@@ -60,7 +60,7 @@ class IndexController extends AbstractController
             exit();
         }
         return $this->render("index.html.twig", [
-            'form' => $form
+            'form' => $form,
         ]);
     }
 
@@ -100,7 +100,7 @@ class IndexController extends AbstractController
                     'errors'=>["link expired or never existed"]
                 ]);
             }else{
-                return $this->render("link.html.twig", [
+                return $this->render("track-link.html.twig", [
                     'clicks' => $link->getClicks(),
                     'link' => "https://".$request->getHost().":".$request->getPort()."/".$link->getOurUrl(),
                     'form' => $form,
@@ -108,7 +108,7 @@ class IndexController extends AbstractController
                 ]);
             }
         }
-        return $this->render("link.html.twig", [
+        return $this->render("track-link.html.twig", [
             'form' => $form
         ]);
     }

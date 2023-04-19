@@ -3,7 +3,10 @@
 {% block content %}
     <h1 class="text-3xl text-center">Paste the URL to be shortened</h1>
     {{ form_start(form, {'attr': {'class': ''}}) }}
-        {{ form_row(form.sourceUrl, {'attr': {'class': 'w-full'}}) }}
-        <input type="submit" value="Generate link">
+        <section class="block mx-auto my-70 w-300 h-35 relative shadow-md rounded-full overflow-hidden text-secondary-800">
+            {{ form_row(form.sourceUrl, {'errors': false, 'attr': {'class': 'form-input w-200 bg-transparent border-none py-5 pl-8 pr-28 text-sm focus:outline-none'}}) }}
+            <input type="submit" value="Generate" class="form-submit text-sm text-gray-600 absolute top-0 right-0 w-70 h-35 rounded-full border-none bg-transparent shadow-lg cursor-pointer py-5 px-5 hover:bg-primary-100 transition duration-100 ease-in-out">
+        </section>
+        {{ form_errors(form.sourceUrl) }}
     {{ form_end(form) }}
 {% endblock %}
